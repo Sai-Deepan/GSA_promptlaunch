@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Progress</title>
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        #app-container {
+            width: 90%;
+            max-width: 600px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+        }
+
+        h1 {
+            color: #2c3e50;
+        }
+
+        /* Style for the start button */
+        #startButton {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #startButton:hover {
+            background-color: #2980b9;
+        }
+
+        /* This container holds the links and progress bar, hidden by default */
+        #taskContainer {
+            display: none; /* Starts hidden */
+            margin-top: 2rem;
+        }
+
+        /* Styles for the progress bar */
+        #progressBarContainer {
+            width: 100%;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        #progressBar {
+            width: 0%; /* Starts at 0% */
+            height: 30px;
+            background-color: #2ecc71;
+            border-radius: 5px;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+            font-weight: bold;
+            transition: width 0.4s ease-in-out; /* Smooth animation */
+        }
+
+        /* Styles for the link list */
+        #linkList {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #linkList li {
+            margin: 10px 0;
+        }
+
+        #linkList a {
+            display: block;
+            background-color: #ecf0f1;
+            color: #3498db;
+            padding: 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        #linkList a:hover {
+            background-color: #bdc3c7;
+        }
+
+        /* This class is added by JavaScript after a link is clicked */
+        #linkList a.completed {
+            background-color: #95a5a6;
+            color: #ecf0f1;
+            text-decoration: line-through;
+            pointer-events: none; /* Prevents re-clicking */
+        }
+
+        /* Completion message, hidden by default */
+        #completionMessage {
+            display: none; /* Starts hidden */
+            font-size: 1.5rem;
+            color: #2ecc71;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+    <h1>Link Progress Tracker</h1>
+
+    <button id="startButton">Start Tasks</button>
+
+    <div id="taskContainer">
+        <h2>Click each prompt to complete the tasks:</h2>
+
+        <div id="progressBarContainer">
+            <div id="progressBar">0%</div>
+        </div>
+
+        <ul id="linkList">
+            <li><a href="https://aiskillshouse.com/student/qr-mediator.html?uid=4660&promptId=22" target="_blank" rel="noopener noreferrer" class="taskLink">Prompt 1</a></li>
+            <li><a href="https://aiskillshouse.com/student/qr-mediator.html?uid=4660&promptId=21" target="_blank" rel="noopener noreferrer" class="taskLink">Prompt 2</a></li>
+            <li><a href="https://aiskillshouse.com/student/qr-mediator.html?uid=4660&promptId=20" target="_blank" rel="noopener noreferrer" class="taskLink">Prompt 3</a></li>
+            <li><a href="https://aiskillshouse.com/student/qr-mediator.html?uid=4660&promptId=19" target="_blank" rel="noopener noreferrer" class="taskLink">Prompt 4</a></li>
+            <li><a href="https://aiskillshouse.com/student/qr-mediator.html?uid=4660&promptId=18" target="_blank" rel="noopener noreferrer" class="taskLink">Prompt 5</a></li>
+        </ul>
+
+        <h2 id="completionMessage">All tasks complete! 🎉</h2>
+    </div>
+</div>
+
+<script>
+    // Get all the important elements from the page
+    const startButton = document.getElementById('startButton');
+    const taskContainer = document.getElementById('taskContainer');
+    const progressBar = document.getElementById('progressBar');
+    const completionMessage = document.getElementById('completionMessage');
+
+    // Get all the links with the class "taskLink"
+    const links = document.querySelectorAll('.taskLink');
+
+    const totalTasks = links.length; // Total number of links (5)
+    let completedTasks = 0; // Counter for clicked links
+
+    // 1. When the "Start Tasks" button is clicked:
+    startButton.addEventListener('click', () => {
+        startButton.style.display = 'none'; // Hide the start button
+        taskContainer.style.display = 'block'; // Show the links and progress bar
+    });
+
+    // 2. Add a click listener to EACH link
+    links.forEach(link => {
+        link.addEventListener('click', () => {
+
+            // Check if this link has *already* been clicked
+            if (link.classList.contains('completed')) {
+                return; // If yes, do nothing
+            }
+
+            // If it's a new click:
+            link.classList.add('completed'); // Mark the link as completed (CSS styles it)
+            completedTasks++; // Increment the counter
+
+            // Calculate the new percentage
+            // (1 / 5) * 100 = 20%
+            // (2 / 5) * 100 = 40%
+            // etc.
+            const percentage = Math.round((completedTasks / totalTasks) * 100);
+
+            // Update the progress bar's width and text
+            progressBar.style.width = percentage + '%';
+            progressBar.textContent = percentage + '%';
+
+            // 3. Check if all tasks are done
+            if (completedTasks === totalTasks) {
+                // If yes, show the completion message after a short delay
+                setTimeout(() => {
+                    completionMessage.style.display = 'block';
+                }, 500); // 500ms = 0.5 seconds
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
